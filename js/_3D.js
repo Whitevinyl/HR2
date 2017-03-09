@@ -23,14 +23,14 @@ function setup3d() {
 
     // point camera //
     camera3d.position.z = 7.1; // distance
-    camera3d.position.y = 2.5; // height
+    camera3d.position.y = 2.2; // height
     camera3d.rotation.x = -((TAU/360)*20); // angle
 
 
     // create fog & background color //
-    col3d = new THREE.Color( colToHex(bgCols[2]) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(bgCols[2],true)) );
     scene3d.background = col3d;
-    scene3d.fog = new THREE.Fog(col3d,5,10);
+    scene3d.fog = new THREE.Fog(col3d,6,10);
 
 
     // lighting //
@@ -45,7 +45,7 @@ function setup3d() {
 function addlighting() {
     materialType = THREE.MeshLambertMaterial;
 
-    var balance = 0.85;
+    var balance = 0.95;
 
     // directional //
     directional3d = new THREE.DirectionalLight( 0xefefff, 1 - balance );
@@ -53,7 +53,7 @@ function addlighting() {
     scene3d.add( directional3d );
 
     // ambient //
-    ambient3d = new THREE.AmbientLight( 0xffefef, balance );
+    ambient3d = new THREE.AmbientLight( 0xffffff, balance );
     scene3d.add( ambient3d );
 }
 
@@ -63,7 +63,8 @@ function addlighting() {
 
 function render3d() {
     if (renderer3d) {
-        scene3d.rotation.y += ((TAU/360) * 0.05);
+        var speed = 0.08;
+        scene3d.rotation.y += ((TAU/360) * speed);
         building.update();
         renderer3d.render( scene3d, camera3d );
     }

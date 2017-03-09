@@ -26,19 +26,61 @@ proto.generate = function() {
     var i,s,l,geometry,material;
 
 
-    // TERRAIN //
-    col3d = new THREE.Color( colToHex(bgCols[3]) );
-    geometry = new THREE.PlaneGeometry( 2, 2, 1, 1 );
-    geometry = new THREE.BoxGeometry( 3, 1.5, 2 );
+    this.dimensions = {
+        width: 80,
+        depth: 35,
+        floors: 15,
+        floorHeight: 3.5,
+        floorSpace: 0.5,
+        base: 3,
+        roof: 3,
+        wingWidth: 30,
+        wingSpill: 3
+
+    };
+
+    var m = this.dimensions;
+    var meters = 0.03;
+
+    var h = (m.base + m.roof + ((m.floorHeight + m.floorSpace) * m.floors)) * meters;
+
+    // BASE //
+    /*geometry = new THREE.PlaneGeometry( 2, 2, 1, 1 );
+    material = new materialType( {color: col3d} );
+    this.terrain = new THREE.Mesh( geometry, material );
+    this.terrain.rotation.x = -TAU/4;
+     meshUpdate(this.terrain);
+    this.obj.add( this.terrain );*/
+
+    // MAIN //
+    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[0],true)) );
+    geometry = new THREE.BoxGeometry( m.width * meters, h, m.depth * meters ); // w, h, d
     material = new materialType( {color: col3d} );
 
-    this.terrain = new THREE.Mesh( geometry, material );
-    /*this.terrain.rotation.x = -TAU/4;
-    meshUpdate(this.terrain);*/
+    var main = new THREE.Mesh( geometry, material );
+    this.obj.add( main );
 
 
-    this.obj.add( this.terrain );
+    // WINGS //
+    var w = m.wingWidth * meters;
+    var d = (m.depth + (2 * m.wingSpill)) * meters;
+    geometry = new THREE.BoxGeometry( w, h, d );
 
+    var wing1 = new THREE.Mesh( geometry, material );
+    this.obj.add( wing1 );
+    wing1.position.x = -((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters);
+
+    var wing2 = new THREE.Mesh( geometry, material );
+    this.obj.add( wing2 );
+    wing2.position.x = ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters);
+
+
+
+    // FLOORS //
+    l = m.floors;
+    for (i=0; i<l; i++) {
+
+    }
 };
 
 

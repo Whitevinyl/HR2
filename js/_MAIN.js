@@ -36,7 +36,18 @@ var mouseIsDown = false;
 
 
 // COLORS //
-var bgCols = [new RGBA(5,5,5,1),new RGBA(255,236,88,1),new RGBA(210,210,200,1),new RGBA(230,220,190,1)];
+//var bgCols = [new RGBA(5,5,5,1),new RGBA(255,236,88,1),new RGBA(210,210,200,1),new RGBA(230,220,190,1)];
+
+var bgCols = [new RGBA(235,240,224,1),new RGBA(51,44,52,1),new RGBA(240,240,240,1)];
+var brickCols = [new RGBA(206,192,174,1),new RGBA(196,174,164,1),new RGBA(188,159,156,1),new RGBA(168,136,140,1)];
+var windowCols = [new RGBA(127,99,107,1),new RGBA(185,147,152,1),new RGBA(153,119,134,1)];
+var plantCols = [new RGBA(98,173,72,1),new RGBA(244,243,231,1),new RGBA(153,119,134,1)];
+var headerCols = [new RGBA(206,192,174,1),new RGBA(214,201,190,1),new RGBA(222,213,198,1),new RGBA(127,99,107,1),new RGBA(213,210,194,1),new RGBA(215,223,214,1)];
+var footerCols = [new RGBA(188,159,156,1),new RGBA(222,213,198,1),new RGBA(153,119,134,1),new RGBA(127,99,107,1)];
+var baseCols = [new RGBA(153,119,134,1),new RGBA(127,99,107,1),new RGBA(188,159,156,1),new RGBA(185,147,152,1)];
+var balconyCols = [new RGBA(127,99,107,1),new RGBA(222,213,198,1),new RGBA(209,229,218,1),new RGBA(233,230,213,1)];
+var quadCols = [new RGBA(127,99,107,1),new RGBA(222,213,198,1),new RGBA(214,201,190,1),new RGBA(233,230,213,1)];
+
 var textCol = new RGBA(255,255,255,1);
 
 
@@ -68,9 +79,11 @@ function init() {
     // INITIALISE THINGS //
     setupInteraction(canvas[0]);
 
+    color.master = new RGBA(5,5,-5,1);
     setupStats();
     setup3d();
     //setupAudio();
+
 
 
 
