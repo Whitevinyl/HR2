@@ -50,6 +50,7 @@ function addlighting() {
     // directional //
     directional3d = new THREE.DirectionalLight( 0xefefff, 1 - balance );
     directional3d.position.set( 1, 2, 2 ).normalize();
+    directional3d.castShadow = true;
     scene3d.add( directional3d );
 
     // ambient //

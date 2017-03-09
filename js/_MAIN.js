@@ -50,7 +50,7 @@ var quadCols = [new RGBA(127,99,107,1),new RGBA(222,213,198,1),new RGBA(214,201,
 
 var textCol = new RGBA(255,255,255,1);
 
-
+color.master = new RGBA(5,5,10,1);
 
 //-------------------------------------------------------------------------------------------
 //  INITIALISE
@@ -78,8 +78,6 @@ function init() {
 
     // INITIALISE THINGS //
     setupInteraction(canvas[0]);
-
-    color.master = new RGBA(5,5,-5,1);
     setupStats();
     setup3d();
     //setupAudio();
