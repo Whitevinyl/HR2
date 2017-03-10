@@ -28,9 +28,9 @@ function setup3d() {
 
 
     // create fog & background color //
-    col3d = new THREE.Color( colToHex(color.processRGBA(bgCols[2],true)) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(bgCols[0],true)) );
     scene3d.background = col3d;
-    scene3d.fog = new THREE.Fog(col3d,6,10);
+    scene3d.fog = new THREE.Fog(col3d,6,9.5);
 
 
     // lighting //
@@ -45,16 +45,27 @@ function setup3d() {
 function addlighting() {
     materialType = THREE.MeshLambertMaterial;
 
-    var balance = 0.95;
+    var balance = 0.85;
 
     // directional //
-    directional3d = new THREE.DirectionalLight( 0xefefff, 1 - balance );
-    directional3d.position.set( 1, 2, 2 ).normalize();
+    directional3d = new THREE.DirectionalLight( 0xffffdd, 1 - balance );
+    directional3d.position.set( 1, 2, 2 );
+
     directional3d.castShadow = true;
+    renderer3d.shadowMap.enabled = true;
+    renderer3d.shadowMap.type = THREE.BasicShadowMap; // default THREE.PCFShadowMap
+
+    //Set up shadow properties for the light
+    directional3d.shadow.mapSize.width = 2048;
+    directional3d.shadow.mapSize.height = 2048;
+    directional3d.shadow.camera.near = 0.05;
+    directional3d.shadow.camera.far = 8;
+
+
     scene3d.add( directional3d );
 
     // ambient //
-    ambient3d = new THREE.AmbientLight( 0xffffff, balance );
+    ambient3d = new THREE.AmbientLight( 0xddddff, balance );
     scene3d.add( ambient3d );
 }
 

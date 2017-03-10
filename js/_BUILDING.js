@@ -30,8 +30,7 @@ proto.generate = function() {
         width: 70,
         depth: 30,
         floors: 11,
-        floorHeight: 5,
-        floorSpace: 0.5,
+        floorHeight: 5.5,
         base: 3,
         roof: 1.5,
         wingWidth: 25,
@@ -41,9 +40,9 @@ proto.generate = function() {
     };
 
     var m = this.dimensions;
-    var meters = 0.035;
+    var meters = 0.033;
 
-    var bh = (m.base + m.roof + ((m.floorHeight + m.floorSpace) * m.floors)) * meters;
+    var bh = (m.base + m.roof + (m.floorHeight * m.floors)) * meters;
 
     // BASE //
     /*geometry = new THREE.PlaneGeometry( 2, 2, 1, 1 );
@@ -56,11 +55,12 @@ proto.generate = function() {
 
 
     // MAIN //
-    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[1],true)) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[2],true)) );
     geometry = new THREE.BoxGeometry( m.width * meters, bh, m.depth * meters ); // w, h, d
     material = new materialType( {color: col3d} );
 
     var main = new THREE.Mesh( geometry, material );
+    main.receiveShadow = true;
     this.obj.add( main );
 
 
@@ -72,10 +72,14 @@ proto.generate = function() {
     geometry = new THREE.BoxGeometry( w, bh, d );
 
     var wing1 = new THREE.Mesh( geometry, material );
+    wing1.castShadow = true;
+    wing1.receiveShadow = true;
     this.obj.add( wing1 );
     wing1.position.x = -((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters);
 
     var wing2 = new THREE.Mesh( geometry, material );
+    wing2.castShadow = true;
+    wing2.receiveShadow = true;
     this.obj.add( wing2 );
     wing2.position.x = ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters);
 
@@ -84,44 +88,75 @@ proto.generate = function() {
 
     // FLOORS //
     w = (m.wingWidth + (m.balconySpill * 2)) * meters;
-    var h = (m.floorHeight / 2) * meters;
+    var h = (m.floorHeight *0.4) * meters;
     d = (m.balconyDepth + m.balconySpill) * meters;
-    var f = (m.floorHeight + m.floorSpace) * meters;
+    var f = m.floorHeight * meters;
 
-    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(balconyCols[3],true)) );
     material = new materialType( {color: col3d} );
     geometry = new THREE.BoxGeometry( w, h, d );
 
     l = m.floors;
     for (i=0; i<l; i++) {
 
-        var y = -(bh / 2) + (m.base * meters) + (f * i);
+        var y = -(bh / 2) + (m.base * meters) + (f * 1.1) + (f * i);
 
         var fl = new THREE.Mesh( geometry, material );
+        fl.castShadow = true;
         this.obj.add(fl);
         fl.position.x = - ((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters) - (m.balconySpill * meters);
         fl.position.z =   ((m.depth * meters) / 2) - (d / 2) + (m.wingSpill * meters) + (m.balconySpill * meters);
         fl.position.y = y;
 
         var fr = new THREE.Mesh( geometry, material );
+        fr.castShadow = true;
         this.obj.add(fr);
         fr.position.x = ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters) + (m.balconySpill * meters);
         fr.position.z = ((m.depth * meters) / 2) - (d / 2) + (m.wingSpill * meters) + (m.balconySpill * meters);
         fr.position.y = y;
 
         var bl = new THREE.Mesh( geometry, material );
+        bl.castShadow = true;
         this.obj.add(bl);
         bl.position.x = - ((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters) - (m.balconySpill * meters);
         bl.position.z = - ((m.depth * meters) / 2) + (d / 2) - (m.wingSpill * meters) - (m.balconySpill * meters);
         bl.position.y = y;
 
         var br = new THREE.Mesh( geometry, material );
+        br.castShadow = true;
         this.obj.add(br);
         br.position.x =   ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters) + (m.balconySpill * meters);
         br.position.z = - ((m.depth * meters) / 2) + (d / 2) - (m.wingSpill * meters) - (m.balconySpill * meters);
         br.position.y = y;
     }
+
+    this.antennae(bh,meters);
 };
+
+
+
+
+proto.antennae = function(bh, meters) {
+    var t = 0.008;
+    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
+    var material = new materialType( {color: col3d} );
+    var r = 8;
+
+    var n = tombola.range(3,9);
+    for (var i=0; i<n; i++) {
+        var h = tombola.rangeFloat(0.03,0.8);
+        var geometry = new THREE.BoxGeometry( t, h, t );
+        var a = new THREE.Mesh( geometry, material );
+        this.obj.add(a);
+        a.position.x =  tombola.rangeFloat(-r,r) * meters;
+        a.position.z =  tombola.rangeFloat(-r,r) * meters;
+        a.position.y =  (bh/2) + (h/2);
+    }
+
+
+
+};
+
 
 
 //-------------------------------------------------------------------------------------------
