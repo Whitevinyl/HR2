@@ -34,10 +34,12 @@ proto.generate = function() {
         base: 3,
         roof: 1.5,
         wingWidth: 25,
-        wingSpill: 3,
+        wingSpill: 4,
         headerDepth: 12,
         headerSpill: 1.3,
-        headerHeight: 2.5
+        headerHeight: 2.5,
+        entranceWidth: 14,
+        entranceDepth: 8
     };
 
     var m = this.dimensions;
@@ -56,12 +58,12 @@ proto.generate = function() {
 
 
     // MAIN //
-    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
-    col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[4],true)) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[2],true)) );
     geometry = new THREE.BoxGeometry( m.width * meters, bh, m.depth * meters ); // w, h, d
     material = new materialType( {color: col3d} );
 
     var main = new THREE.Mesh( geometry, material );
+    main.castShadow = true;
     main.receiveShadow = true;
     this.obj.add( main );
 
@@ -93,46 +95,138 @@ proto.generate = function() {
     var h = m.headerHeight * meters;
     d = (m.headerDepth + m.headerSpill) * meters;
     var f = m.floorHeight * meters;
+    var startY = -(bh / 2) + (m.base * meters) - (h/2) + (f * 1);
 
-    col3d = new THREE.Color( colToHex(color.processRGBA(footerCols[0],true)) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[5],true)) );
     material = new materialType( {color: col3d} );
     geometry = new THREE.BoxGeometry( w, h, d );
+    var he;
 
     l = m.floors;
     for (i=0; i<l; i++) {
 
-        var y = -(bh / 2) + (m.base * meters) - (h/2) + (f * 1) + (f * i);
+        var y = startY + (f * i);
 
-        var fl = new THREE.Mesh( geometry, material );
-        fl.castShadow = true;
-        this.obj.add(fl);
-        fl.position.x = - ((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
-        fl.position.z =   ((m.depth * meters) / 2) - (d / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
-        fl.position.y = y;
+        he = new THREE.Mesh( geometry, material );
+        he.castShadow = true;
+        he.receiveShadow = true;
+        this.obj.add(he);
+        he.position.x = - ((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
+        he.position.z =   ((m.depth * meters) / 2) - (d / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
+        he.position.y = y;
 
-        var fr = new THREE.Mesh( geometry, material );
-        fr.castShadow = true;
-        this.obj.add(fr);
-        fr.position.x = ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
-        fr.position.z = ((m.depth * meters) / 2) - (d / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
-        fr.position.y = y;
+        he = new THREE.Mesh( geometry, material );
+        he.castShadow = true;
+        he.receiveShadow = true;
+        this.obj.add(he);
+        he.position.x = ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
+        he.position.z = ((m.depth * meters) / 2) - (d / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
+        he.position.y = y;
 
-        var bl = new THREE.Mesh( geometry, material );
-        bl.castShadow = true;
-        this.obj.add(bl);
-        bl.position.x = - ((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
-        bl.position.z = - ((m.depth * meters) / 2) + (d / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
-        bl.position.y = y;
+        he = new THREE.Mesh( geometry, material );
+        he.castShadow = true;
+        he.receiveShadow = true;
+        this.obj.add(he);
+        he.position.x = - ((m.width * meters) / 2) + (w / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
+        he.position.z = - ((m.depth * meters) / 2) + (d / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
+        he.position.y = y;
 
-        var br = new THREE.Mesh( geometry, material );
-        br.castShadow = true;
-        this.obj.add(br);
-        br.position.x =   ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
-        br.position.z = - ((m.depth * meters) / 2) + (d / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
-        br.position.y = y;
+        he = new THREE.Mesh( geometry, material );
+        he.castShadow = true;
+        he.receiveShadow = true;
+        this.obj.add(he);
+        he.position.x =   ((m.width * meters) / 2) - (w / 2) + (m.wingSpill * meters) + (m.headerSpill * meters);
+        he.position.z = - ((m.depth * meters) / 2) + (d / 2) - (m.wingSpill * meters) - (m.headerSpill * meters);
+        he.position.y = y;
     }
 
+
+    // ENTRANCE //
+    w = m.entranceWidth * meters;
+    d = m.entranceDepth * meters;
+    geometry = new THREE.BoxGeometry( w, h, d );
+
+    var e = new THREE.Mesh( geometry, material );
+    e.castShadow = true;
+    e.receiveShadow = true;
+    this.obj.add( e );
+    e.position.z = ((m.depth * meters) / 2) + (d / 2);
+    e.position.y = startY;
+
+
+
+    h = m.floorHeight * meters;
+    var x = ((m.entranceWidth * meters) / 2) - (2 * meters);
+    y = -(bh / 2) + (h / 2);
+    var z = ((m.depth * meters) / 2) + d - (2 * meters);
+
+    geometry = new THREE.BoxGeometry( meters, h, meters );
+
+    var p = new THREE.Mesh( geometry, material );
+    p.castShadow = true;
+    p.receiveShadow = true;
+    this.obj.add( p );
+    p.position.x = - x;
+    p.position.z = z;
+    p.position.y = y;
+
+    p = new THREE.Mesh( geometry, material );
+    p.castShadow = true;
+    p.receiveShadow = true;
+    this.obj.add( p );
+    p.position.x = x;
+    p.position.z = z;
+    p.position.y = y;
+
+
+    // ANTENNAE //
     this.antennae(bh,meters);
+
+
+    // PANEL LIGHTS //
+    w = 0.05;
+    h = 0.03;
+    x = - (((m.entranceWidth * meters) / 2) + 0.001);
+    y = -(bh / 2) + (((m.floorHeight + m.base) * meters)) - ((m.headerHeight * meters) / 2);
+    z = ((m.depth * meters) / 2) + (d / 2);
+
+    geometry = new THREE.PlaneGeometry( w, h );
+    material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+    p = new THREE.Mesh( geometry, material );
+
+    this.obj.add( p );
+    p.position.x = x;
+    p.position.y = y;
+    p.position.z = z;
+    p.rotation.y = -TAU/4;
+
+    x = (((m.entranceWidth * meters) / 2) + 0.001);
+    p = new THREE.Mesh( geometry, material );
+
+    this.obj.add( p );
+    p.position.x = x;
+    p.position.y = y;
+    p.position.z = z;
+    p.rotation.y = TAU/4;
+
+    /*var light = new THREE.PointLight( 0xffffff, 20, 40 * meters );
+    scene3d.add( light );
+    z = ((m.depth * meters) / 2) + 0.3;
+    light.position.set( 0, y + 0.2, z);
+
+
+    var helper = new THREE.PointLightHelper( light, 0.1 );
+    scene3d.add( helper );*/
+
+
+    /*var rectLight = new THREE.RectAreaLight( 0xffffff, 70,  w * 2, h * 2 );
+    rectLight.matrixAutoUpdate = true;
+    rectLight.intensity = 150;
+    this.obj.add(rectLight);
+    rectLight.position.set( 0, y, z+0.1 );*/
+
+    //p.rotation.z = -TAU/4;
+
 };
 
 
@@ -155,7 +249,7 @@ proto.antennae = function(bh, meters) {
         var y = tombola.rangeFloat(-8,8);
 
         // antennae per cluster //
-        var n2 = tombola.range(1 + (n===1),3);
+        var n2 = tombola.range(2 + (n===1),4);
         for (var i=0; i<n2; i++) {
             var h = tombola.rangeFloat(0.1,0.9);
 
@@ -170,13 +264,14 @@ proto.antennae = function(bh, meters) {
 
 
             // block //
-            if (tombola.percent(40)) {
+            if (tombola.percent(50)) {
                 t2 = tombola.rangeFloat(0.02,0.03);
                 blh = tombola.rangeFloat(0.01,(h/2));
                 col3d = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
                 material = new materialType( {color: col3d} );
                 geometry = new THREE.BoxGeometry( t2, blh, t2 );
                 b = new THREE.Mesh( geometry, material );
+                b.castShadow = true;
                 this.obj.add(b);
                 b.position.x =  a.position.x;
                 b.position.z =  a.position.z;
@@ -191,11 +286,30 @@ proto.antennae = function(bh, meters) {
                 material = new materialType( {color: col3d} );
                 geometry = new THREE.BoxGeometry( t2, blh, t2 );
                 b = new THREE.Mesh( geometry, material );
+                b.castShadow = true;
                 this.obj.add(b);
                 b.position.x =  a.position.x;
                 b.position.z =  a.position.z;
                 b.position.y =  a.position.y + tombola.rangeFloat(-(h/2),(h/2));
             }
+
+            // dish //
+            if (tombola.percent(10)) {
+                var rad = tombola.rangeFloat(0.01,0.05);
+                blh = tombola.rangeFloat(0.01,(h/2));
+                col3d = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
+                material = new materialType( {color: col3d} );
+                geometry = new THREE.CylinderGeometry( rad, rad, 0.02 );
+                b = new THREE.Mesh( geometry, material );
+                b.castShadow = true;
+                this.obj.add(b);
+                b.position.x =  a.position.x;
+                b.position.z =  a.position.z;
+                b.position.y =  a.position.y + tombola.rangeFloat(-(h/2),(h/2));
+                b.rotation.x = -TAU/4;
+                b.rotation.z = Math.random() * TAU;
+            }
+
         }
 
     }

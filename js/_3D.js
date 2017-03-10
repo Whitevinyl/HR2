@@ -45,11 +45,11 @@ function setup3d() {
 function addlighting() {
     materialType = THREE.MeshLambertMaterial;
 
-    var balance = 0.85;
+    var balance = 0.93;
 
     // directional //
     directional3d = new THREE.DirectionalLight( 0xffffdd, 1 - balance );
-    directional3d.position.set( 2, 2.5, 2 );
+    directional3d.position.set( 2, 3, 2.2 );
 
     directional3d.castShadow = true;
     renderer3d.shadowMap.enabled = true;
