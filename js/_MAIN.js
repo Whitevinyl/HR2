@@ -52,7 +52,7 @@ var textCol = new RGBA(255,255,255,1);
 
 //color.master = new RGBA(5,5,10,1);
 //color.master = new RGBA(2,2,0,1);
-//color.master = new RGBA(5,5,-5,1);
+color.master = new RGBA(5,5,-5,1);
 
 //-------------------------------------------------------------------------------------------
 //  INITIALISE

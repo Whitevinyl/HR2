@@ -28,9 +28,9 @@ function setup3d() {
 
 
     // create fog & background color //
-    col3d = new THREE.Color( colToHex(color.processRGBA(bgCols[0],true)) );
+    col3d = new THREE.Color( colToHex(color.processRGBA(bgCols[2],true)) );
     scene3d.background = col3d;
-    scene3d.fog = new THREE.Fog(col3d,6,9.5);
+    scene3d.fog = new THREE.Fog(col3d,6.2,9.2);
 
 
     // lighting //
@@ -49,15 +49,18 @@ function addlighting() {
 
     // directional //
     directional3d = new THREE.DirectionalLight( 0xffffdd, 1 - balance );
-    directional3d.position.set( 1, 2, 2 );
+    directional3d.position.set( 2, 2.5, 2 );
 
     directional3d.castShadow = true;
     renderer3d.shadowMap.enabled = true;
     renderer3d.shadowMap.type = THREE.BasicShadowMap; // default THREE.PCFShadowMap
+    renderer3d.toneMapping = THREE.NoToneMapping;
 
     //Set up shadow properties for the light
-    directional3d.shadow.mapSize.width = 2048;
-    directional3d.shadow.mapSize.height = 2048;
+    var s = 1024;
+    s = 2048;
+    directional3d.shadow.mapSize.width = s;
+    directional3d.shadow.mapSize.height = s;
     directional3d.shadow.camera.near = 0.05;
     directional3d.shadow.camera.far = 8;
 
@@ -75,7 +78,7 @@ function addlighting() {
 
 function render3d() {
     if (renderer3d) {
-        var speed = 0.08;
+        var speed = 0.12;
         scene3d.rotation.y += ((TAU/360) * speed);
         building.update();
         renderer3d.render( scene3d, camera3d );
