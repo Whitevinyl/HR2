@@ -78,8 +78,17 @@ function addlighting() {
 
 function render3d() {
     if (renderer3d) {
-        var speed = 0.12;
-        scene3d.rotation.y += ((TAU/360) * speed);
+
+        if (!mouseIsDown) {
+            var speed = 0.12;
+            scene3d.rotation.y += ((TAU/360) * speed);
+        }
+        else {
+            scene3d.rotation.y = lerp(scene3d.rotation.y,(-TAU/2) + ((TAU/fullX) * mouseX), 10);
+        }
+
+
+
         building.update();
         renderer3d.render( scene3d, camera3d );
     }
