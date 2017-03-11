@@ -5,6 +5,8 @@
 //  SETUP
 //-------------------------------------------------------------------------------------------
 
+var meters = 0.04;
+
 function Building() {
     this.obj = new THREE.Object3D();
     scene3d.add( this.obj );
@@ -27,23 +29,23 @@ proto.generate = function() {
 
 
     this.dimensions = {
-        width: 70,
-        depth: 30,
+        width: 55,
+        depth: 25,
         floors: 10,
-        floorHeight: 5.5,
-        base: 3,
+        floorHeight: 4.2,
+        base: 1.8,
         roof: 1.5,
-        wingWidth: 25,
-        wingSpill: 4,
-        headerDepth: 12,
-        headerSpill: 1.8,
-        headerHeight: 2,
-        entranceWidth: 14,
-        entranceDepth: 10
+        wingWidth: 20,
+        wingSpill: 3,
+        headerDepth: 11,
+        headerSpill: 1,
+        headerHeight: 1.6,
+        entranceWidth: 11,
+        entranceDepth: 8,
+        antenna: 0.21
     };
 
     var m = this.dimensions;
-    var meters = 0.03;
 
     var bh = (m.base + m.roof + (m.floorHeight * m.floors)) * meters;
     this.height = bh;
@@ -143,26 +145,36 @@ proto.generate = function() {
 
 
     // ENTRANCE //
-    this.entrance(m, meters);
+    this.entrance(m);
+
+
+    // ELEVATOR //
+    this.elevator(m);
 
 
     // ANTENNAE //
-    this.antennae(bh,meters);
+    this.antennae(bh);
 
 
-    // LEFT //
+    // SUBSTATION //
+    this.substation(m);
+
+
+    // SIDE LIGHTS //
     var x = -((m.width * meters) / 2) - (m.wingSpill * meters);
     y = (bh / 2) - (m.roof * meters);
-    var z = 3 * meters;
+    var z = 2.5 * meters;
 
     this.obj.add( lightPanel(x,y,-z,'left') );
     this.obj.add( lightPanel(x,y,z,'left') );
+    this.obj.add( lightPanel(-x,y,-z,'right') );
+    this.obj.add( lightPanel(-x,y,z,'right') );
 };
 
 
 
 
-proto.entrance = function(m,meters) {
+proto.entrance = function(m) {
 
 
     var w = m.entranceWidth * meters;
@@ -219,7 +231,7 @@ proto.entrance = function(m,meters) {
     // door //
     w = (m.entranceWidth - 6) * meters;
     h = (m.floorHeight + m.base) * meters;
-    x = ((m.entranceWidth * meters) / 2) - meters;
+    x = ((m.entranceWidth * meters) / 2) - (0.75 * meters);
     y = h / 2;
     z = 0.001;
 
@@ -229,13 +241,13 @@ proto.entrance = function(m,meters) {
     p.castShadow = true;
     p.receiveShadow = true;
     ent.add( p );
-    p.position.set(-x,y,2 * meters);
+    p.position.set(-x,y,1.5 * meters);
 
     p = new THREE.Mesh( geometry, material );
     p.castShadow = true;
     p.receiveShadow = true;
     ent.add( p );
-    p.position.set(x,y,2 * meters);
+    p.position.set(x,y,1.5 * meters);
 
 
     col3d = new THREE.Color( colToHex(color.processRGBA(windowCols[0],true)) );
@@ -266,8 +278,8 @@ proto.entrance = function(m,meters) {
 
 
 function lightPanel(x,y,z,orientation) {
-    var w = 0.05;
-    var h = 0.025;
+    var w = 1 * meters;
+    var h = 0.6 * meters;
     var geometry = new THREE.PlaneGeometry( w, h );
     var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
     var p = new THREE.Mesh( geometry, material );
@@ -296,26 +308,29 @@ function lightPanel(x,y,z,orientation) {
 
 
 
-proto.antennae = function(bh, meters) {
+proto.antennae = function(bh) {
+
+    var m = this.dimensions;
 
     // thickness //
-    var t = 0.008;
+    var t = m.antenna * meters;
     var t2,blh, b, material;
 
 
 
-    var r = 1.2;
+    var r = 1;
 
     // clusters //
     var n = tombola.range(2,3);
     for (var j=0; j<n; j++) {
         var x = tombola.rangeFloat(-25,25);
-        var y = tombola.rangeFloat(-8,8);
+        var y = tombola.rangeFloat(-9,9);
 
         // antennae per cluster //
         var n2 = tombola.range(2,4);
         for (var i=0; i<n2; i++) {
-            var h = tombola.rangeFloat(0.1,0.9);
+
+            var h = tombola.rangeFloat(2,22) * meters;
 
             col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
             material = new materialType( {color: col3d} );
@@ -329,8 +344,8 @@ proto.antennae = function(bh, meters) {
 
             // block //
             if (tombola.percent(50)) {
-                t2 = tombola.rangeFloat(0.02,0.03);
-                blh = tombola.rangeFloat(0.01,(h/2));
+                t2 = tombola.rangeFloat(0.3,0.8) * meters;
+                blh = tombola.rangeFloat(0.5 * meters,(h/2));
                 col3d = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
                 material = new materialType( {color: col3d} );
                 geometry = new THREE.BoxGeometry( t2, blh, t2 );
@@ -344,8 +359,8 @@ proto.antennae = function(bh, meters) {
 
             // block 2 //
             if (tombola.percent(10)) {
-                t2 = tombola.rangeFloat(0.02,0.03);
-                blh = tombola.rangeFloat(0.01,(h/2));
+                t2 = tombola.rangeFloat(0.3,0.8) * meters;
+                blh = tombola.rangeFloat(0.5 * meters,(h/2));
                 col3d = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
                 material = new materialType( {color: col3d} );
                 geometry = new THREE.BoxGeometry( t2, blh, t2 );
@@ -359,11 +374,10 @@ proto.antennae = function(bh, meters) {
 
             // dish //
             if (tombola.percent(10)) {
-                var rad = tombola.rangeFloat(0.01,0.05);
-                blh = tombola.rangeFloat(0.01,(h/2));
+                var rad = tombola.rangeFloat(0.2,1.3) * meters;
                 col3d = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
                 material = new materialType( {color: col3d} );
-                geometry = new THREE.CylinderGeometry( rad, rad, 0.02 );
+                geometry = new THREE.CylinderGeometry( rad, rad, 0.4 * meters );
                 b = new THREE.Mesh( geometry, material );
                 b.castShadow = true;
                 this.obj.add(b);
@@ -379,6 +393,106 @@ proto.antennae = function(bh, meters) {
     }
 };
 
+
+proto.elevator = function(m) {
+    var w = 8 * meters;
+    var h = this.height + (4 * meters);
+    var d = 8 * meters;
+    var x = 0;
+    var y = -(this.height / 2); // base
+    var z = -((m.depth * meters) / 2); // back
+
+    col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[5],true)) );
+    var material = new materialType( {color: col3d} );
+    var geometry = new THREE.BoxGeometry( w,h,d );
+
+    var spawner = new Spawner(w,h,d, new THREE.Mesh( geometry, material ));
+    spawner.mesh.castShadow = true;
+    spawner.mesh.receiveShadow = true;
+    spawner.position(x,y,z);
+    spawner.align('bottom');
+    spawner.align('front');
+    spawner.spawn( this.obj);
+};
+
+
+
+proto.substation = function(m) {
+    var w = 1 * meters;
+    var h = 1.6 * meters;
+    var d = 2.1 * meters;
+    var x = -30 * meters;
+    var y = -(this.height / 2);
+    var z = ((m.depth * meters) / 2) + (25 * meters);
+    var t = m.antenna * meters;
+    var ah = 2 * meters;
+
+    col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[3],true)) );
+    var material = new materialType( {color: col3d} );
+    var geometry = new THREE.BoxGeometry( w,h,d );
+
+    var mesh = new THREE.Mesh( geometry, material );
+    //mesh.castShadow = true;
+    mesh.position.set(x,y + (h/2),z);
+    this.obj.add(mesh);
+
+    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
+    material = new materialType( {color: col3d} );
+    geometry = new THREE.BoxGeometry( t, ah, t );
+
+    mesh = new THREE.Mesh( geometry, material );
+    mesh.position.set(x,y + (ah/2),z - (0.5 * meters));
+    this.obj.add(mesh);
+};
+
+
+// bounding box positioning helper //
+function Spawner(w,h,d,mesh) {
+    this.w = w;
+    this.h = h;
+    this.d = d;
+    this.mesh = mesh;
+}
+Spawner.prototype.spawn = function( obj ) {
+    obj.add (this.mesh);
+    // null references here?
+};
+
+Spawner.prototype.position = function(x,y,z) {
+    this.mesh.position.set(x,y,z);
+};
+
+Spawner.prototype.align = function(origin,padding) {
+    padding = padding || 0;
+
+    switch (origin) {
+
+        case 'back':
+            this.mesh.position.z += ((this.d / 2) + padding);
+            break;
+
+        case 'front':
+            this.mesh.position.z -= ((this.d / 2) + padding);
+            break;
+
+        case 'left':
+            this.mesh.position.x -= ((this.w / 2) + padding);
+            break;
+
+        case 'right':
+            this.mesh.position.x += ((this.w / 2) + padding);
+            break;
+
+        case 'top':
+            this.mesh.position.y -= ((this.h / 2) + padding);
+            break;
+
+        case 'bottom':
+        case 'base':
+            this.mesh.position.y += ((this.h / 2) + padding);
+            break;
+    }
+};
 
 
 //-------------------------------------------------------------------------------------------

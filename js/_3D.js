@@ -48,7 +48,7 @@ function addlighting() {
     var balance = 0.93;
 
     // directional //
-    directional3d = new THREE.DirectionalLight( 0xffffdd, 1 - balance );
+    directional3d = new THREE.DirectionalLight( 0xffffdd, 1.02 - balance );
     directional3d.position.set( 2, 3, 2.2 );
 
     directional3d.castShadow = true;
