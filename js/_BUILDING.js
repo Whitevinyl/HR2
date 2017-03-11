@@ -169,6 +169,12 @@ proto.generate = function() {
     this.obj.add( lightPanel(x,y,z,'left') );
     this.obj.add( lightPanel(-x,y,-z,'right') );
     this.obj.add( lightPanel(-x,y,z,'right') );
+
+
+    // windows //
+
+    y = (bh / 2) - (m.floorHeight * meters);
+    this.obj.add ( window1(x,y,0,'left',false) );
 };
 
 
@@ -306,6 +312,67 @@ function lightPanel(x,y,z,orientation) {
 }
 
 
+function window1(x,y,z,orientation,lit) {
+
+    var obj = new THREE.Object3D();
+    obj.position.set(x,y,z);
+
+    var w = 1.5 * meters;
+    var h = 2.5 * meters;
+    var f = 0.2 * meters;
+
+    var col = new THREE.Color( colToHex(color.processRGBA(headerCols[5],true)) );
+    var material = new materialType( {color: col} );
+    var geometry = new THREE.PlaneGeometry( w, h );
+
+    var frame = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    frame.shadow(false,true);
+    frame.align('back',0.001);
+    frame.spawn(obj);
+
+    col = new THREE.Color( colToHex(color.processRGBA(headerCols[3],true)) );
+    material = new materialType( {color: col} );
+
+    // top glass //
+    var th = (h - (f * 3)) * 0.3;
+    geometry = new THREE.PlaneGeometry( w - (f * 2), th );
+    var top = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    top.shadow(false,true);
+    top.position(0,(-f) - (th / 2),0);
+    top.align('bottom');
+    top.align('back',0.002);
+    top.spawn(obj);
+
+    // bottom glass //
+    var bh = (h - (f * 3)) * 0.7;
+    geometry = new THREE.PlaneGeometry( w - (f * 2), bh );
+    var bottom = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    bottom.shadow(false,true);
+    bottom.position(0,(f) + (bh / 2),0);
+    bottom.align('top');
+    bottom.align('back',0.002);
+    bottom.spawn(obj);
+
+
+
+    switch (orientation) {
+        case 'left':
+            obj.rotation.y = -TAU/4;
+            break;
+        case 'right':
+            obj.rotation.y = TAU/4;
+            break;
+        case 'back':
+            obj.rotation.y = TAU/2;
+            break;
+        case 'front':
+            break;
+    }
+
+    return obj;
+}
+
+
 
 
 proto.antennae = function(bh) {
@@ -395,6 +462,7 @@ proto.antennae = function(bh) {
 
 
 proto.elevator = function(m) {
+
     var w = 8 * meters;
     var h = this.height + (4 * meters);
     var d = 8 * meters;
@@ -402,17 +470,33 @@ proto.elevator = function(m) {
     var y = -(this.height / 2); // base
     var z = -((m.depth * meters) / 2); // back
 
+    var el = new THREE.Object3D();
+    el.position.set(x,y,z);
+
     col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[5],true)) );
     var material = new materialType( {color: col3d} );
     var geometry = new THREE.BoxGeometry( w,h,d );
 
     var spawner = new Spawner(w,h,d, new THREE.Mesh( geometry, material ));
-    spawner.mesh.castShadow = true;
-    spawner.mesh.receiveShadow = true;
-    spawner.position(x,y,z);
+    spawner.shadow(true, true);
+    spawner.position(0,0,0);
     spawner.align('bottom');
     spawner.align('front');
-    spawner.spawn( this.obj);
+    spawner.spawn( el );
+
+
+    // lights //
+    x = (w / 2);
+    y = h - (1 * meters);
+    z = -d + (1.4 * meters);
+
+    // L //
+    el.add( lightPanel(-x,y,z,'left') );
+
+    // R //
+    el.add( lightPanel(x,y,z,'right') );
+
+    this.obj.add( el );
 };
 
 
@@ -425,7 +509,7 @@ proto.substation = function(m) {
     var y = -(this.height / 2);
     var z = ((m.depth * meters) / 2) + (25 * meters);
     var t = m.antenna * meters;
-    var ah = 2 * meters;
+    var ah = 2.5 * meters;
 
     col3d = new THREE.Color( colToHex(color.processRGBA(headerCols[3],true)) );
     var material = new materialType( {color: col3d} );
@@ -456,6 +540,11 @@ function Spawner(w,h,d,mesh) {
 Spawner.prototype.spawn = function( obj ) {
     obj.add (this.mesh);
     // null references here?
+};
+
+Spawner.prototype.shadow = function( cast, receive ) {
+    this.mesh.castShadow = cast;
+    this.mesh.receiveShadow = receive;
 };
 
 Spawner.prototype.position = function(x,y,z) {
