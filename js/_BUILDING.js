@@ -35,6 +35,7 @@ proto.generate = function() {
         floorHeight: 4.2,
         base: 1.8,
         roof: 1.5,
+        flatWidth: 10,
         wingWidth: 20,
         wingSpill: 3,
         headerDepth: 11,
@@ -51,12 +52,7 @@ proto.generate = function() {
     this.height = bh;
 
     // BASE //
-    /*geometry = new THREE.PlaneGeometry( 2, 2, 1, 1 );
-    material = new materialType( {color: col3d} );
-    this.terrain = new THREE.Mesh( geometry, material );
-    this.terrain.rotation.x = -TAU/4;
-     meshUpdate(this.terrain);
-    this.obj.add( this.terrain );*/
+    this.base(m);
 
 
 
@@ -189,6 +185,62 @@ proto.generate = function() {
 
 
 
+proto.base = function(m) {
+
+    var w = (m.width + m.wingSpill + 9) * meters;
+    var d = (m.depth + m.wingSpill + 16) * meters;
+    var x = (3 * meters);
+    var y = -(this.height / 2);
+    var z = 0;
+
+    var col = new THREE.Color( colToHex(color.processRGBA(concreteCols[4],true)) );
+    var material = new materialType( {color: col} );
+
+    // main //
+    var geometry = new THREE.PlaneGeometry( w,d );
+    var p = new THREE.Mesh( geometry, material );
+    p.receiveShadow = true;
+    p.rotation.x = -TAU/4;
+    p.position.set(x,y,z);
+
+    this.obj.add( p );
+
+    // front //
+    var w2 = 40 * meters;
+    var d2 = 20 * meters;
+    var x2 = x - (w/2) + (w2/2);
+    var z2 = (d/2) + (d2/2);
+
+    geometry = new THREE.PlaneGeometry( w2,d2 );
+    p = new THREE.Mesh( geometry, material );
+    p.receiveShadow = true;
+    p.rotation.x = -TAU/4;
+    p.position.set(x2,y,z2);
+
+    this.obj.add( p );
+
+
+    // wall //
+    var w3 = 0.6 * meters;
+    var d3 = 20 * meters;
+    var h3 = 1.3 * meters;
+    var x3 = x - (w/2) + w2 - (w3/2);
+    var y3 = y + (h3 / 2);
+    var z3 = (d/2) + (d2/2);
+
+    col = new THREE.Color( colToHex(color.processRGBA(concreteCols[3],true)) );
+    material = new materialType( {color: col} );
+
+    geometry = new THREE.BoxGeometry( w3,h3,d3 );
+    p = new THREE.Mesh( geometry, material );
+    p.castShadow = true;
+    p.position.set(x3,y3,z3);
+
+    this.obj.add( p );
+
+};
+
+
 
 proto.entrance = function(m) {
 
@@ -218,30 +270,6 @@ proto.entrance = function(m) {
     y = (m.base * meters) - (h/2) + (m.floorHeight * meters);
     z = (d / 2);
     e.position.set(0,y,z);
-
-
-    // columns //
-    /*h = m.floorHeight * meters;
-    x = ((m.entranceWidth * meters) / 2) - (2 * meters);
-    y = (h / 2);
-    z = d - (2 * meters);
-
-    geometry = new THREE.BoxGeometry( meters, h, meters );
-
-    // L //
-    p = new THREE.Mesh( geometry, material );
-    p.castShadow = true;
-    p.receiveShadow = true;
-    ent.add( p );
-    p.position.set(-x,y,z);
-
-    // R //
-    p = new THREE.Mesh( geometry, material );
-    p.castShadow = true;
-    p.receiveShadow = true;
-    ent.add( p );
-    p.position.set(x,y,z);*/
-
 
 
     // door //
@@ -362,6 +390,20 @@ function window1(x,y,z,orientation,lit) {
     bottom.align('top');
     bottom.align('back',0.002);
     bottom.spawn(obj);
+
+
+    // cap //
+    col = new THREE.Color( colToHex(color.processRGBA(concreteCols[3],true)) );
+    material = new materialType( {color: col} );
+
+    var ch = 0.5 * meters;
+    geometry = new THREE.BoxGeometry( w, ch, ch );
+    var cap = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    cap.shadow(true,true);
+    cap.position(0,-(ch / 2),(ch / 2));
+    cap.align('bottom');
+    cap.align('back');
+    cap.spawn(obj);
 
 
 
@@ -515,9 +557,10 @@ proto.substation = function(m) {
     var w = 1 * meters;
     var h = 1.6 * meters;
     var d = 2.1 * meters;
-    var x = -30 * meters;
+    var bw = (m.width + (m.wingSpill * 2)) * meters;
+    var x = (-bw / 2) - (w / 2);
     var y = -(this.height / 2);
-    var z = ((m.depth * meters) / 2) + (25 * meters);
+    var z = ((m.depth * meters) / 2) + (15 * meters);
     var t = m.antenna * meters;
     var ah = 2.5 * meters;
 
@@ -526,17 +569,16 @@ proto.substation = function(m) {
     var geometry = new THREE.BoxGeometry( w,h,d );
 
     var mesh = new THREE.Mesh( geometry, material );
-    //mesh.castShadow = true;
     mesh.position.set(x,y + (h/2),z);
     this.obj.add(mesh);
 
-    col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
+    /*col3d = new THREE.Color( colToHex(color.processRGBA(brickCols[3],true)) );
     material = new materialType( {color: col3d} );
     geometry = new THREE.BoxGeometry( t, ah, t );
 
     mesh = new THREE.Mesh( geometry, material );
     mesh.position.set(x,y + (ah/2),z - (0.5 * meters));
-    this.obj.add(mesh);
+    this.obj.add(mesh);*/
 };
 
 

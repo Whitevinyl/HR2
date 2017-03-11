@@ -5,8 +5,9 @@
 //  SETUP
 //-------------------------------------------------------------------------------------------
 
-var scene3d,camera3d,renderer3d,directional3d,ambient3d,col3d,materialType;
+var scene3d,camera3d,renderer3d,directional3d,ambient3d,col3d,materialType, lastAngle;
 var building;
+var destAngle = 0;
 
 function setup3d() {
 
@@ -81,11 +82,14 @@ function render3d() {
 
         if (!mouseIsDown) {
             var speed = 0.12;
-            scene3d.rotation.y += ((TAU/360) * speed);
+            destAngle += ((TAU/360) * speed);
+            lastAngle = scene3d.rotation.y;
         }
         else {
-            scene3d.rotation.y = lerp(scene3d.rotation.y,(-TAU/2) + ((TAU/fullX) * mouseX), 10);
+            destAngle = lastAngle + ((-TAU/2) + ((TAU/fullX) * mouseX));
+
         }
+        scene3d.rotation.y = lerp(scene3d.rotation.y,destAngle, 10);
 
 
 
