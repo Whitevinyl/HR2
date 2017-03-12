@@ -83,6 +83,7 @@ function addlighting() {
 function render3d() {
     if (renderer3d) {
 
+        // set destination angle for rotation if dragging //
         if (!mouseIsDown) {
             var speed = 0.12;
             destAngle += ((TAU/360) * speed);
@@ -92,8 +93,9 @@ function render3d() {
             destAngle = lastAngle + ((-TAU/2) + ((TAU/fullX) * mouseX));
 
         }
-        scene3d.rotation.y = lerp(scene3d.rotation.y,destAngle, 10);
 
+        // 'lerp' / smoothly move to destination angle //
+        scene3d.rotation.y = lerp(scene3d.rotation.y,destAngle, 10);
 
 
         building.update();
