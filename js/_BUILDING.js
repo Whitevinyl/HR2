@@ -151,6 +151,24 @@ proto.generate = function() {
         this.obj.add ( window1(wx, wy,wz,'front',false) );
         this.obj.add ( window1(0, wy,wz,'front',false) );
         this.obj.add ( window1(-wx,wy,wz,'front',false) );
+
+
+        // flats //
+        var fx = -((m.width + (m.wingSpill * 2)) * meters) / 2;
+        var fy = y + ((m.headerHeight * meters) / 2) - (m.floorHeight * meters);
+        var fz = (((m.depth + (m.wingSpill * 2)) * meters) / 2);
+
+        this.obj.add ( flat(m,fx + ((m.flatWidth * meters) / 2),fy,fz,'front',false) );
+        this.obj.add ( flat(m,fx + ((m.flatWidth * meters) * 1.5),fy,fz,'front',false) );
+
+        this.obj.add ( flat(m,-fx - ((m.flatWidth * meters) / 2),fy,fz,'front',false) );
+        this.obj.add ( flat(m,-fx - ((m.flatWidth * meters) * 1.5),fy,fz,'front',false) );
+
+        this.obj.add ( flat(m,fx + ((m.flatWidth * meters) / 2),fy,-fz,'back',false) );
+        this.obj.add ( flat(m,fx + ((m.flatWidth * meters) * 1.5),fy,-fz,'back',false) );
+
+        this.obj.add ( flat(m,-fx - ((m.flatWidth * meters) / 2),fy,-fz,'back',false) );
+        this.obj.add ( flat(m,-fx - ((m.flatWidth * meters) * 1.5),fy,-fz,'back',false) );
     }
 
 
@@ -165,6 +183,9 @@ proto.generate = function() {
     // ANTENNAE //
     this.antennae(bh);
 
+
+    // ROOF //
+    this.roof(m);
 
     // SUBSTATION //
     this.substation(m);
@@ -240,6 +261,109 @@ proto.base = function(m) {
 
 };
 
+
+proto.roof = function(m) {
+    var t = 0.4 * meters;
+    var h = 1.1 * meters;
+    var y = (this.height / 2) + (h * 0.55);
+
+    var x1,z1,x2,z2;
+    var pad = (t / 2) - 0.005;
+    var col = new THREE.Color( colToHex(color.processRGBA(headerCols[3],true)) );
+
+    // WALLS //
+
+    // front //
+    x1 = (-((m.width + (m.wingSpill * 2)) * meters) / 2) + pad;
+    z1 = ( ((m.depth + (m.wingSpill * 2)) * meters) / 2) - pad;
+    x2 = (-((m.width + (m.wingSpill * 2)) * meters) / 2) + (m.wingWidth * meters) - pad;
+    z2 = ( ((m.depth + (m.wingSpill * 2)) * meters) / 2) - pad;
+    this.obj.add(wall(x1,z1,x2,z2,t,h,y,col));
+
+    // side //
+    x1 = (-((m.width + (m.wingSpill * 2)) * meters) / 2) + pad;
+    z1 = ( ((m.depth + (m.wingSpill * 2)) * meters) / 2) - pad;
+    x2 = (-((m.width + (m.wingSpill * 2)) * meters) / 2) + pad;
+    z2 = (-((m.depth + (m.wingSpill * 2)) * meters) / 2) + pad;
+    this.obj.add(wall(x1,z1,x2,z2,t,h,y,col));
+
+    // back //
+    x1 = (-((m.width + (m.wingSpill * 2)) * meters) / 2) + (m.wingWidth * meters) - pad;
+    z1 = (-((m.depth + (m.wingSpill * 2)) * meters) / 2) + pad;
+    x2 = (-((m.width + (m.wingSpill * 2)) * meters) / 2) + pad;
+    z2 = (-((m.depth + (m.wingSpill * 2)) * meters) / 2) + pad;
+    this.obj.add(wall(x1,z1,x2,z2,t,h,y,col));
+
+
+
+    // front //
+    x1 = ( ((m.width + (m.wingSpill * 2)) * meters) / 2) - pad;
+    z1 = ( ((m.depth + (m.wingSpill * 2)) * meters) / 2) - pad;
+    x2 = ( ((m.width + (m.wingSpill * 2)) * meters) / 2) - (m.wingWidth * meters) + pad;
+    z2 = ( ((m.depth + (m.wingSpill * 2)) * meters) / 2) - pad;
+    this.obj.add(wall(x1,z1,x2,z2,t,h,y,col));
+
+    // side //
+    x1 = ( ((m.width + (m.wingSpill * 2)) * meters) / 2) - pad;
+    z1 = ( ((m.depth + (m.wingSpill * 2)) * meters) / 2) - pad;
+    x2 = ( ((m.width + (m.wingSpill * 2)) * meters) / 2) - pad;
+    z2 = (-((m.depth + (m.wingSpill * 2)) * meters) / 2) + pad;
+    this.obj.add(wall(x1,z1,x2,z2,t,h,y,col));
+
+    // back //
+    x1 = ( ((m.width + (m.wingSpill * 2)) * meters) / 2) - (m.wingWidth * meters) + pad;
+    z1 = (-((m.depth + (m.wingSpill * 2)) * meters) / 2) + pad;
+    x2 = ( ((m.width + (m.wingSpill * 2)) * meters) / 2) - pad;
+    z2 = (-((m.depth + (m.wingSpill * 2)) * meters) / 2) + pad;
+    this.obj.add(wall(x1,z1,x2,z2,t,h,y,col));
+
+
+    // BOX //
+    h = 2 * meters;
+    var w = 9 * meters;
+    var d = 6 * meters;
+    col = new THREE.Color( colToHex(color.processRGBA(concreteCols[3],true)) );
+    var material = new materialType( {color: col} );
+    var geometry = new THREE.BoxGeometry( w, h, d );
+
+    var box = new THREE.Mesh( geometry, material );
+    box.castShadow = true;
+    box.receiveShadow = true;
+    box.position.set(-m.wingWidth * meters,y,(this.height / 2));
+    this.obj.Add(box);
+};
+
+
+function wall(x1,z1,x2,z2,t,h,y,col) {
+
+    var w, d, x, z;
+
+    // x axis //
+    if (x1===x2) {
+        w = t;
+        d = z2 - z1;
+        x = x1;
+        z = z2 - (d/2);
+    }
+
+    // z axis //
+    else {
+        w = x2 - x1;
+        d = t;
+        x = x2 - (w/2);
+        z = z1;
+    }
+
+    var material = new materialType( {color: col} );
+    var geometry = new THREE.BoxGeometry( w, h, d );
+
+    var wall = new THREE.Mesh( geometry, material );
+    wall.castShadow = true;
+    wall.receiveShadow = true;
+    wall.position.set(x,y,z);
+
+    return wall;
+}
 
 
 proto.entrance = function(m) {
@@ -424,6 +548,97 @@ function window1(x,y,z,orientation,lit) {
     return obj;
 }
 
+
+function flat(m, x,y,z, orientation) {
+
+    var obj = new THREE.Object3D();
+    obj.position.set(x,y,z);
+
+    var w = m.flatWidth * meters;
+    var h = m.floorHeight * meters;
+    var f = 0.17 * meters;
+
+
+    var w2 = w * 0.4;
+    var h2 = h * 0.6;
+
+    var col = new THREE.Color( colToHex(color.processRGBA(headerCols[5],true)) );
+    var material = new materialType( {color: col} );
+    var geometry = new THREE.PlaneGeometry( w2, h2 );
+
+    var frame = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    frame.shadow(false,true);
+    frame.position(-(w2/2),0,0);
+    frame.align('bottom');
+    frame.align('back',0.001);
+    frame.spawn(obj);
+
+    frame = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    frame.shadow(false,true);
+    frame.position((w2/2),0,0);
+    frame.align('bottom');
+    frame.align('back',0.001);
+    frame.spawn(obj);
+
+
+    var w3 = w2 - (f * 2);
+    var h3 = h2 - (f * 2);
+
+    col = new THREE.Color( colToHex(color.processRGBA(tombola.item(windowCols),true)) );
+    material = new materialType( {color: col} );
+    geometry = new THREE.PlaneGeometry( w3, h3 );
+
+    var glass = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    glass.shadow(false,true);
+    glass.position(-(w3/2)-f,0,0);
+    glass.align('bottom');
+    glass.align('back',0.002);
+    glass.spawn(obj);
+
+    glass = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
+    glass.shadow(false,true);
+    glass.position((w3/2) + f,0,0);
+    glass.align('bottom');
+    glass.align('back',0.002);
+    glass.spawn(obj);
+
+
+    // dish //
+    if (tombola.percent(30)) {
+        var rad = tombola.rangeFloat(0.5,1) * meters;
+        var x2 = tombola.rangeFloat(-w/2,w/2);
+        var y2 = (m.floorHeight * meters) - (m.headerHeight * meters);
+        var z2 = (m.headerSpill * meters) + (0.2 * meters);
+
+
+        col = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
+        material = new materialType( {color: col} );
+        geometry = new THREE.CylinderGeometry( rad, rad, 0.3 * meters );
+        var dish = new THREE.Mesh( geometry, material );
+        dish.castShadow = true;
+        obj.add(dish);
+        dish.position.set(x2,y2,z2);
+        dish.rotation.x = -TAU/4;
+        dish.rotation.z = tombola.rangeFloat(-0.1,0.1) * TAU;
+    }
+
+
+    switch (orientation) {
+        case 'left':
+            obj.rotation.y = -TAU/4;
+            break;
+        case 'right':
+            obj.rotation.y = TAU/4;
+            break;
+        case 'back':
+            obj.rotation.y = TAU/2;
+            break;
+        case 'front':
+            break;
+    }
+
+    return obj;
+}
 
 
 

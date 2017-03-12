@@ -51,7 +51,7 @@ var quadCols = [new RGBA(127,99,107,1),new RGBA(222,213,198,1),new RGBA(214,201,
 
 var textCol = new RGBA(255,255,255,1);
 
-color.master = new RGBA(5,5,0,1);
+color.master = new RGBA(8,5,-2,1);
 
 //color.master = new RGBA(5,2,-10,1);
 var lvl = -5;
