@@ -55,9 +55,14 @@ var textCol = new RGBA(255,255,255,1);
 color.master = new RGBA(8,5,-2,1);
 
 //color.master = new RGBA(5,2,-10,1);
-var lvl = -5;
-color.lowPass = new RGBA(-lvl,-lvl,-lvl,1);
+var darken = -25;
+var pink = -5;
+color.highPass = new RGBA(darken,darken + pink,darken + (pink * 1.5),1);
+var wash = 75;
+color.lowPass = new RGBA(wash,wash,wash,1);
 //color.master = new RGBA(10,5,-12,1);
+var lightBalance = 0.93;
+lightBalance = 0.95;
 
 //-------------------------------------------------------------------------------------------
 //  INITIALISE

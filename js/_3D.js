@@ -49,7 +49,7 @@ function setup3d() {
 function addlighting() {
     materialType = THREE.MeshLambertMaterial;
 
-    var balance = 0.93;
+    var balance = lightBalance;
 
     // directional //
     directional3d = new THREE.DirectionalLight( 0xffffdd, 1.02 - balance );
@@ -112,4 +112,13 @@ function draw3d(ctx) {
     if (renderer3d) {
         ctx.drawImage(renderer3d.domElement,0,0,fullX,fullY);
     }
+}
+
+//-------------------------------------------------------------------------------------------
+//  RESIZE
+//-------------------------------------------------------------------------------------------
+
+
+function resize3d() {
+
 }

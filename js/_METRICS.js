@@ -41,7 +41,7 @@ function metrics() {
     }
     console.log(device);
 
-    var u;
+    var u,cameraDepth;
 
     if (device=="mobile") {
 
@@ -55,6 +55,14 @@ function metrics() {
         dataType = Math.round(u/100);
         subType = Math.round(u/90);
 
+        if (camera3d) {
+            camera3d.aspect = fullX / (fullX*1.2);
+            camera3d.aspect = halfX / halfY;
+            camera3d.updateProjectionMatrix();
+            cameraDepth = 7.1 + (((height/width)-1)*5);
+            camera3d.position.z = cameraDepth;
+        }
+
     } else {
 
         u = (height * ratio) * 1.8;
@@ -66,6 +74,13 @@ function metrics() {
         bodyType = Math.round(u/50);
         dataType = Math.round(u/85);
         subType = Math.round(u/90);
+
+        if (camera3d) {
+            camera3d.aspect = halfX / halfY;
+            camera3d.updateProjectionMatrix();
+            cameraDepth = 7.1;
+            camera3d.position.z = cameraDepth;
+        }
     }
 
 

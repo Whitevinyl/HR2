@@ -426,12 +426,12 @@ proto.entrance = function(m) {
     p.position.set(x,y,1.5 * meters);
 
 
-    col3d = new THREE.Color( colToHex(color.processRGBA(windowCols[0],true)) );
+    var col = new THREE.Color( colToHex(color.processRGBA(headerCols[3],true)) );
+    material = new materialType( {color: col} );
     geometry = new THREE.PlaneGeometry( w, h );
-    material = new THREE.MeshBasicMaterial( {color: col3d} );
+
 
     p = new THREE.Mesh( geometry, material );
-    p.castShadow = true;
     p.receiveShadow = true;
     ent.add( p );
     p.position.set(0,y,z);
@@ -502,6 +502,9 @@ function window1(x,y,z,orientation,lit) {
 
     col = new THREE.Color( colToHex(color.processRGBA(tombola.item(windowCols),true)) );
     material = new materialType( {color: col} );
+    if (tombola.percent(10)) {
+        material = new THREE.MeshBasicMaterial( {color: col} );
+    }
 
     // top glass //
     var th = (h - (f * 3)) * 0.6;
@@ -594,6 +597,9 @@ function flat(m, x,y,z, orientation) {
 
     col = new THREE.Color( colToHex(color.processRGBA(tombola.item(windowCols),true)) );
     material = new materialType( {color: col} );
+    if (tombola.percent(10)) {
+        material = new THREE.MeshBasicMaterial( {color: col} );
+    }
     geometry = new THREE.PlaneGeometry( w3, h3 );
 
     var glass = new Spawner(w,h,0, new THREE.Mesh( geometry, material ));
