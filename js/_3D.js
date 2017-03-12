@@ -7,7 +7,7 @@
 
 var scene3d,camera3d,renderer3d,directional3d,ambient3d,col3d,materialType, lastAngle;
 var building;
-var destAngle = 0;
+var destAngle = -TAU/8;
 
 function setup3d() {
 
@@ -40,6 +40,9 @@ function setup3d() {
 
     // create building //
     building = new Building();
+
+    // start angle //
+    scene3d.rotation.y = -TAU/8;
 }
 
 

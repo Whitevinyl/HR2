@@ -329,8 +329,16 @@ proto.roof = function(m) {
     var box = new THREE.Mesh( geometry, material );
     box.castShadow = true;
     box.receiveShadow = true;
-    box.position.set(-m.wingWidth * meters,y,(this.height / 2));
-    this.obj.Add(box);
+    box.position.set(-m.wingWidth * meters,(this.height / 2) + (h / 2),0);
+    this.obj.add(box);
+
+
+    var x = -m.wingWidth * meters;
+    y = this.height / 2;
+    var z = (m.depth * meters) / 4;
+    this.obj.add( aircon(x,y,z,'up') );
+    this.obj.add( aircon(x - (5 * meters),y,z,'up') );
+    this.obj.add( aircon(x + (5 * meters),y,z,'up') );
 };
 
 
@@ -611,7 +619,7 @@ function flat(m, x,y,z, orientation) {
         var z2 = (m.headerSpill * meters) + (0.2 * meters);
 
 
-        col = new THREE.Color( colToHex(color.processRGBA(tombola.item(headerCols),true)) );
+        col = new THREE.Color( colToHex(color.processRGBA(tombola.item(dishCols),true)) );
         material = new materialType( {color: col} );
         geometry = new THREE.CylinderGeometry( rad, rad, 0.3 * meters );
         var dish = new THREE.Mesh( geometry, material );
@@ -620,6 +628,12 @@ function flat(m, x,y,z, orientation) {
         dish.position.set(x2,y2,z2);
         dish.rotation.x = -TAU/4;
         dish.rotation.z = tombola.rangeFloat(-0.1,0.1) * TAU;
+    }
+
+    // ac //
+    if (tombola.percent(10)) {
+        y2 = ((m.floorHeight * meters) / 2) - (0.5 * meters);
+        obj.add (aircon(w2,y2,0,'front'));
     }
 
 
@@ -641,6 +655,40 @@ function flat(m, x,y,z, orientation) {
 }
 
 
+function aircon(x,y,z, orientation) {
+
+    var w = 1.3 * meters;
+    var h = 2 * meters;
+    var d = 1 * meters;
+
+    var col = new THREE.Color( colToHex(color.processRGBA(dishCols[1],true)) );
+    var material = new materialType( {color: col} );
+    var geometry = new THREE.BoxGeometry( w, h, d );
+    var ac = new THREE.Mesh( geometry, material );
+    ac.castShadow = true;
+    ac.position.set(x,y,z + (d/2));
+
+    switch (orientation) {
+        case 'left':
+            ac.rotation.y = -TAU/4;
+            break;
+        case 'right':
+            ac.rotation.y = TAU/4;
+            break;
+        case 'back':
+            ac.rotation.y = TAU/2;
+            break;
+        case 'front':
+            break;
+        case 'up':
+            ac.rotation.x = -TAU/4;
+            ac.position.set(x,y + (d/2),z);
+            break;
+    }
+
+    return ac;
+}
+
 
 proto.antennae = function(bh) {
 
@@ -655,9 +703,9 @@ proto.antennae = function(bh) {
     var r = 1;
 
     // clusters //
-    var n = tombola.range(2,3);
+    var n = 3;
     for (var j=0; j<n; j++) {
-        var x = tombola.rangeFloat(-25,25);
+        var x = tombola.rangeFloat(-10,25);
         var y = tombola.rangeFloat(-9,9);
 
         // antennae per cluster //
